@@ -11,7 +11,7 @@ To see how this all works, let's start by examining the interface of the `swap` 
 function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data);
 ```
 
-For the sake of example, let's assume that we're dealing with a DAI/WETH pair, where DAI is `token0` and WETH is `token1`. `amount0Out` and `amount1Out` specify the amount of DAI and WETH that the `msg.sender` wants the pair to send to the `to` address (one of these amounts may be 0). At this point you may be wondering how the contract _receives_ tokens. For a typical (non-flash) swap, it's actually the responsibility of `msg.sender` to ensure that enough WETH or DAI has _already been sent_ to the pair before `swap` is called (in the context of trading, this is all handled neatly by a router contract). But when executing a flash swap, _tokens do not need to be sent to the contract before calling `swap`_. Instead, they must be sent from within a _callback function_ that the pair triggers on the `to` address.
+For the sake of example, let's assume that we're dealing with a DAI/WETH pair, where DAI is `token0` and WETH is `token1`. `amount0Out` and `amount1Out` specify the amount of DAI and WETH that the `msg.sender` wants the pair to send to the `to` address (one of these amounts may be 0). At this point, you may be wondering how the contract _receives_ tokens. For a typical (non-flash) swap, it's actually the responsibility of `msg.sender` to ensure that enough WETH or DAI has _already been sent_ to the pair before `swap` is called (in the context of trading, this is all handled neatly by a router contract). But when executing a flash swap, _tokens do not need to be sent to the contract before calling `swap`_. Instead, they must be sent from within a _callback function_ that the pair triggers on the `to` address.
 
 # Triggering a Flash Swap
 
@@ -62,7 +62,7 @@ It may be more intuitive to rewrite this formula in terms of a "fee" levied on t
 
 `DAIReturned >= DAIWithdrawn / .997`
 
-So, the effective fee on the withdrawn amount is `.003 / .997 ≈ 0.3009027%`.
+Thus, the effective fee on the withdrawn amount is `.003 / .997 ≈ 0.3009027%`.
 
 # Resources
 
