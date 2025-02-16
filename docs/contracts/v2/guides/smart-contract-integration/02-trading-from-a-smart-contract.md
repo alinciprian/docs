@@ -11,9 +11,9 @@ _Read [safety considerations](#safety-considerations) for more._
 
 The easiest way to safely swap tokens is to use the [router](../../reference/smart-contracts/router-02), which provides a variety of methods to safely swap to and from different assets. You'll notice that there is a function for each permutation of swapping to/from an exact amount of ETH/tokens.
 
-First you must use an external price source to calculate the safety parameters for the function you'd like to call. This is either a minimum amount received when selling an exact input or the maximum amount you are willing to pay when a buying an exact output amount
+First, you must use an external price source to calculate the safety parameters for the function you'd like to call. This is either a minimum amount received when selling an exact input or the maximum amount you are willing to pay when buying an exact output amount
 
-It is also important to ensure that your contract controls enough ETH/tokens to make the swap, and has granted approval to the router to withdraw this many tokens.
+It is also important to ensure that your contract controls enough ETH/tokens to make the swap and has granted the router approval to withdraw the required amount.
 
 _Check out the [Pricing](../../concepts/advanced-topics/pricing#pricing-trades) page for a more in depth discussion on getting prices._
 
@@ -32,7 +32,7 @@ require(DAI.transferFrom(msg.sender, address(this), amountIn), 'transferFrom fai
 
 ## approve
 
-Now that our contract owns 50 DAI, we need to approve to the [router](../../reference/smart-contracts/router-02) to withdraw this DAI:
+Now that our contract owns 50 DAI, we need to approve the [router](../../reference/smart-contracts/router-02) to withdraw this DAI:
 
 ```solidity
 require(DAI.approve(address(UniswapV2Router02), amountIn), 'approve failed.');
@@ -52,7 +52,7 @@ UniswapV2Router02.swapExactTokensForETH(amountIn, amountOutMin, path, msg.sender
 
 # Safety Considerations
 
-Because Ethereum transactions occur in an adversarial environment, smart contracts that do not perform safety checks _can be exploited for profit_. If a smart contract assumes that the current price on Uniswap is a "fair" price without performing safety checks, _it is vulnerable to manipulation_. A bad actor could e.g. easily insert transactions before and after the swap (a "sandwich" attack) causing the smart contract to trade at a much worse price, profit from this at the trader's expense, and then return the contracts to their original state. (One important caveat is that these types of attacks are mitigated by trading in extremely liquid pools, and/or at low values.)
+Since Ethereum transactions occur in an adversarial environment, smart contracts that do not perform safety checks _can be exploited for profit_. If a smart contract assumes that the current price on Uniswap is a "fair" price without performing safety checks, _it is vulnerable to manipulation_. A bad actor could e.g. easily insert transactions before and after the swap (a "sandwich" attack) causing the smart contract to trade at a much worse price, profit from this at the trader's expense, and then return the contracts to their original state. (One important caveat is that these types of attacks are mitigated by trading in extremely liquid pools, and/or at low values.)
 
 The best way to protect against these attacks is to use an external price feed or "price oracle". The best "oracle" is simply _traders' off-chain observation of the current price_, which can be passed into the trade as a safety check. This strategy is best for situations _where users initiate trades on their own behalf_.
 
